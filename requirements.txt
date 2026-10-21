@@ -1,0 +1,5 @@
+# Versions used by the existing working installation (Python 3.9).
+numpy==2.0.2
+pydicom==2.4.4
+pylibjpeg==2.0.1
+pylibjpeg-libjpeg==2.3.0

@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>MRI Viewer</title>
+<link rel="stylesheet" href="/style.css">
+</head>
+<body>
+<div id="app">
+
+  <aside id="side">
+    <div id="study">
+      <div class="pname" id="pname">&nbsp;</div>
+      <div class="pmeta" id="pmeta"></div>
+    </div>
+    <div class="sect">Series</div>
+    <ul id="serieslist"></ul>
+    <div id="sidefoot">
+      <button id="btn-grounding" class="wide on" title="Show the report-linked image labels" hidden>Grounded findings</button>
+      <button id="btn-report" class="wide" title="Open the referral / request PDF embedded in the study">Referral / request PDF</button>
+      <button id="btn-help" class="wide ghost">Keyboard &amp; mouse</button>
+    </div>
+  </aside>
+
+  <main id="main">
+    <div id="toolbar">
+      <div class="group" id="presets"></div>
+      <div class="spacer"></div>
+      <div class="group">
+        <button data-act="annotations" class="on" title="Toggle grounded report labels (l)">Labels</button>
+        <button data-act="invert" title="Invert greyscale (i)">Invert</button>
+        <button data-act="smooth" title="Toggle interpolation (s)">Smooth</button>
+        <button data-act="measure" title="Distance measure (m)">Measure</button>
+        <button data-act="clear" title="Clear measurements (c)">Clear</button>
+        <button data-act="fit" title="Fit to window (f)">Fit</button>
+        <button data-act="reset" title="Reset window and zoom (r)">Reset</button>
+      </div>
+    </div>
+
+    <div id="stage">
+      <canvas id="cv"></canvas>
+      <div class="ov tl" id="ov-tl"></div>
+      <div class="ov tr" id="ov-tr"></div>
+      <div class="ov bl" id="ov-bl"></div>
+      <div class="ov br" id="ov-br"></div>
+      <div id="finding-banner" hidden></div>
+      <div id="loading">loading…</div>
+    </div>
+
+    <div id="scrub">
+      <button id="btn-play" title="Cine loop (space)">▶</button>
+      <input type="range" id="slider" min="0" max="0" value="0">
+      <div id="slicelabel">– / –</div>
+    </div>
+  </main>
+
+  <aside id="grounding-panel" aria-label="Grounded radiology report" hidden>
+    <div class="ground-head">
+      <div>
+        <div class="eyebrow">Radiologist’s report</div>
+        <h2>Grounded findings</h2>
+      </div>
+      <button id="btn-close-grounding" class="icon" title="Close grounded findings (g)" aria-label="Close grounded findings">×</button>
+    </div>
+
+    <p class="ground-intro">Select a report statement to jump to its cited series and best slice. Boxes mark a broad reported anatomical region—not a lesion outline.</p>
+
+    <div id="grounding-summary" class="ground-summary"></div>
+
+    <div class="finding-filters" role="group" aria-label="Report statement filter">
+      <button data-filter="findings" class="on">Report findings</button>
+      <button data-filter="all">All statements</button>
+    </div>
+
+    <div class="ground-legend" aria-label="Verification legend">
+      <span><i class="dot confirmed"></i>pixel-supported</span>
+      <span><i class="dot located"></i>reported location, not independently verified</span>
+      <span><i class="dot not-located"></i>not located</span>
+    </div>
+
+    <div id="finding-list"></div>
+    <section id="finding-detail" aria-live="polite"></section>
+
+    <div class="ground-actions">
+      <button id="btn-original-report" class="wide">Open original findings report</button>
+      <p>These labels navigate the radiologist’s statements; they do not create new findings.</p>
+    </div>
+  </aside>
+</div>
+
+<div id="help" class="modal" hidden>
+  <div class="sheet">
+    <h2>Controls</h2>
+    <table>
+      <tr><td>Scroll wheel</td><td>next / previous slice</td></tr>
+      <tr><td>Left-drag</td><td>window level &amp; width (brightness / contrast)</td></tr>
+      <tr><td>Right-drag <span class="or">or</span> middle-drag</td><td>pan</td></tr>
+      <tr><td>⌘-drag <span class="or">or</span> ⌥-scroll</td><td>zoom</td></tr>
+      <tr><td>Double-click</td><td>fit image to window</td></tr>
+      <tr><td>↑ ↓ <span class="or">or</span> ← →</td><td>step one slice</td></tr>
+      <tr><td>Page up / down</td><td>step ten slices</td></tr>
+      <tr><td>Home / End</td><td>first / last slice</td></tr>
+      <tr><td>1 … 9</td><td>jump to series</td></tr>
+      <tr><td>Space</td><td>play / pause cine loop</td></tr>
+      <tr><td>m</td><td>measure distance (drag a line, mm)</td></tr>
+      <tr><td>c</td><td>clear measurements</td></tr>
+      <tr><td>i / s</td><td>invert / smoothing</td></tr>
+      <tr><td>f / r</td><td>fit / reset everything</td></tr>
+      <tr><td>l / g</td><td>toggle image labels / grounded-report panel</td></tr>
+      <tr><td>Esc</td><td>close this panel</td></tr>
+    </table>
+    <p class="fine">Window presets are computed from the values the scanner stored
+       in each series. “Auto” fits the window to the actual pixel range of the
+       current slice.</p>
+    <button id="btn-closehelp">Close</button>
+  </div>
+</div>
+
+<script src="/app.js"></script>
+</body>
+</html>
